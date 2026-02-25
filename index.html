@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jászapáti Körzeti Fogászat - Időpontfoglalás</title>
+    <style>
+        /* Színváltozók (Világos mód - Alapértelmezett) */
+        :root {
+            --bg-color: #f4f7f6;
+            --box-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #cccccc;
+            --btn-bg: #0056b3;
+            --btn-hover: #004494;
+            --btn-text: #ffffff;
+            --phone-bg: #eaf4ff;
+            --phone-border: #0056b3;
+            --link-color: #0056b3;
+            --input-bg: #ffffff;
+        }
+
+        /* Sötét mód beállításai (Automatikusan aktiválódik a telefon beállítása alapján) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --box-bg: #1e1e1e;
+                --text-main: #e0e0e0;
+                --text-muted: #aaaaaa;
+                --border-color: #444444;
+                --btn-bg: #0a84ff;
+                --btn-hover: #0066cc;
+                --btn-text: #ffffff;
+                --phone-bg: #1a2a3a;
+                --phone-border: #0a84ff;
+                --link-color: #66b3ff;
+                --input-bg: #2c2c2c;
+            }
+        }
+
+        /* Általános formázás */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            text-align: center; 
+            padding: 30px 15px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .doboz { 
+            background: var(--box-bg); 
+            padding: 40px 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+            max-width: 550px; 
+            margin: 0 auto; 
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        /* Címsorok */
+        h2 { margin-top: 0; margin-bottom: 5px; font-size: 26px; font-weight: bold; }
+        h3 { color: var(--text-muted); margin-top: 0; margin-bottom: 25px; font-weight: 400; font-size: 18px; }
+        p.instrukcio { font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+        
+        /* Legördülő menü */
+        select { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 15px 0 25px 0; 
+            font-size: 16px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color); 
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            cursor: pointer; 
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        select:focus { outline: none; border-color: var(--btn-bg); }
+        
+        /* Gomb */
+        button { 
+            background-color: var(--btn-bg); 
+            color: var(--btn-text); 
+            border: none; 
+            padding: 16px 20px; 
+            font-size: 18px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-weight: 600; 
+            transition: background-color 0.3s, transform 0.1s; 
+        }
+        button:hover { background-color: var(--btn-hover); }
+        button:active { transform: scale(0.98); }
+        
+        /* Telefonos blokk */
+        .telefon { 
+            margin: 30px 0; 
+            padding: 20px; 
+            background-color: var(--phone-bg); 
+            border-radius: 8px; 
+            border-left: 5px solid var(--phone-border); 
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .telefon p { margin: 0 0 8px 0; font-size: 15px; }
+        .telefon a { font-size: 22px; font-weight: bold; color: var(--link-color); text-decoration: none; transition: color 0.3s; }
+        .telefon a:hover { text-decoration: underline; }
+
+        /* Térkép blokk */
+        .terkep-doboz { margin-top: 35px; text-align: left; }
+        .terkep-doboz h4 { margin-bottom: 5px; font-size: 16px; }
+        .terkep-doboz p { margin-top: 0; margin-bottom: 15px; font-size: 14px; color: var(--text-muted); }
+        iframe { border-radius: 8px; filter: contrast(1.05); }
+    </style>
+</head>
+<body>
+
+    <div class="doboz">
+        <h2>Jászapáti Körzeti Fogászat</h2>
+        <h3>Online időpontfoglalás / Online booking</h3>
+        
+        <p class="instrukcio">
+            <b>HU:</b> Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.<br><br>
+            <b>EN:</b> Please select your address from the list! The system will redirect you to the designated dentist for your district.
+        </p>
+
+        <select id="utcaValaszto">
+            <option value="">-- Kérem válasszon lakcímet / Please select an address --</option>
+        </select>
+
+        <button onclick="iranyitas()">Időpontfoglalás / Book an appointment</button>
+
+        <div class="telefon">
+            <p>📞 Időpontfoglalás telefonon is lehetséges: <br> <i>Phone booking also available:</i></p>
+            <a href="tel:+3657440338">+36 57 440 338</a>
+        </div>
+
+        <div class="terkep-doboz">
+            <h4>📍 Rendelőnk címe / Our Address</h4>
+            <p>5130 Jászapáti, Petőfi Sándor út 4-6. (Egészségház)</p>
+            <iframe 
+                src="https://maps.google.com/maps?q=Jászapáti,Petőfi+Sándor+út+4-6&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                width="100%" 
+                height="250" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // NAPTÁR LINKEK
+        // =================================================================
+        const orvos1Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ33_dOoB25zF0iL4Pc73e2WKdozTIp-WZdIsL0T24jynfX_FSKOBzlcbvMj4JdUkXRUE8IhHw-K";
+        const orvos2Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0C-TewK3hvCQndFFdoKo0RPuyMBgsf6Uodjp8K0G-TJiyqNh7S9egQv9HHxbtoL7JqGnA8kCAm";
+
+        // =================================================================
+        // AZ UTCALISTÁK 
+        // =================================================================
+
+        const korzet1Szoveg = "Alsónyomás tanya, Antal utca, Árpád vezér utca, Balajti Illésné utca (1-17 és 2-12), Balassi Bálint utca, Borbás utca (1-9 és 2-26), Busai utca, Csaba vezér utca, Csátés tanya 2., Csintó utca, Damjanich út, Dankó Pista utca, Dósa utca, Farkas utca, Felvégi utca, Hold utca, József Attila utca (10-től és 15-től végig), Kazinczy utca, Kossuth Lajos út, Lados utca (1-33 és 2-24), Munkácsy tér, Nap utca, Orgona utca, Rapi utca, Rákóczi utca, Rózsa utca, Somogyi Béla utca, Szikszai Gábor utca, Szűcs utca, Tabáni utca, Tóth utca, Új utca, Vasvári utca, Viola utca, Zenész utca, István Major, Jászivány - Akácfa utca, Jászivány - Kossuth utca, Jászivány - Alkotmány utca, Jászivány - Köves út, Jászivány - Felszabadulás utca, Jászivány - Petőfi utca, Jászivány - Fő utca, Jászivány - Jász utca, Jászivány - Szabadság utca, Jászivány (összes többi lakcím / all other addresses)";
+
+        const korzet2Szoveg = "Ady Endre utca, Akácfa utca, Álmos utca, Aradi utca, Bartók Béla utca, Béke utca, Bem apó utca, Bercsényi utca, Csajági utca, Dobó utca, Esze Tamás utca, Gábor Áron utca, Galamb utca, Hét-vezért utca, István király út (26-tól végig és páratlan oldal), Jásziványi út, Jászkapitány utca, Jókai utca, Kinizsi utca, Kisjárási utca (1-19 és 2-50), Kocsér utca, Korona utca (2-20), Lehel utca (páros oldal és 1-11), Mező utca, Munkás utca, Nyúl utca, Petőfi Sándor út (2-20), Sas utca, Simon Ignác utca, Sóti utca, Széchényi utca (páros oldal), Szigligeti utca, Szőlő utca (36-végig és 39-től végig), Szögvégi utca, Temető utca, Tompa Mihály utca, Vágó Pál utca, Városkert utca, Vasút utca, Winkler István utca, Felsőnyomás tanya, Gazda-farm 1., Gyeplegelő tanya";
+
+        // =================================================================
+        // A PROGRAM LOGIKÁJA
+        // =================================================================
+
+        let korzet1Lista = korzet1Szoveg.split(',').map(utca => utca.trim()).filter(utca => utca.length > 0);
+        let korzet2Lista = korzet2Szoveg.split(',').map(utca => utca.trim()).filter(utca => utca.length > 0);
+
+        let osszesUtca = [];
+        korzet1Lista.forEach(utca => osszesUtca.push({ nev: utca, korzet: 1 }));
+        korzet2Lista.forEach(utca => osszesUtca.push({ nev: utca, korzet: 2 }));
+
+        osszesUtca.sort((a, b) => a.nev.localeCompare(b.nev, 'hu'));
+
+        window.onload = function() {
+            const selectElem = document.getElementById("utcaValaszto");
+            osszesUtca.forEach(utca => {
+                let option = document.createElement("option");
+                option.value = utca.korzet; 
+                option.text = utca.nev;
+                selectElem.appendChild(option);
+            });
+        };
+
+        function iranyitas() {
+            const valasztottKorzet = document.getElementById("utcaValaszto").value;
+
+            if (valasztottKorzet === "") {
+                alert("Kérem, a továbblépéshez előbb válassza ki a lakcímét! / Please select your address first!");
+                return;
+            }
+
+            if (valasztottKorzet === "1") {
+                window.location.href = orvos1Link;
+            } else if (valasztottKorzet === "2") {
+                window.location.href = orvos2Link;
+            }
+        }
+    </script>
+
+</body>
+</html>
