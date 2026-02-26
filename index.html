@@ -63,21 +63,34 @@
         h3 { color: var(--text-muted); margin-top: 0; margin-bottom: 25px; font-weight: 400; font-size: 18px; }
         p.instrukcio { font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
         
-        /* Legördülő menü */
-        select { 
+        /* Legördülő menü és beviteli mezők */
+        select, input[type="number"] { 
             width: 100%; 
             padding: 14px; 
-            margin: 15px 0 25px 0; 
+            margin: 15px 0; 
             font-size: 16px; 
             border-radius: 8px; 
             border: 1px solid var(--border-color); 
             background-color: var(--input-bg);
             color: var(--text-main);
-            cursor: pointer; 
+            box-sizing: border-box;
             transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
-        select:focus { outline: none; border-color: var(--btn-bg); }
+        select { cursor: pointer; }
+        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-bg); }
         
+        /* A házszám mező alapból rejtve van */
+        #hazszamTarolo {
+            display: none;
+            margin-bottom: 25px;
+            animation: fadeIn 0.4s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Gomb */
         button { 
             background-color: var(--btn-bg); 
@@ -89,6 +102,7 @@
             cursor: pointer; 
             width: 100%; 
             font-weight: 600; 
+            margin-top: 10px;
             transition: background-color 0.3s, transform 0.1s; 
         }
         button:hover { background-color: var(--btn-hover); }
@@ -122,12 +136,19 @@
         
         <p class="instrukcio">
             <b>HU:</b> Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.<br><br>
-            <b>EN:</b> Please select your address from the list! The system will redirect you to the designated dentist for your district.
+            <b>EN:</b> Please select your address from the list! The system will redirect you to the designated dentist.
         </p>
 
-        <select id="utcaValaszto">
-            <option value="">-- Kérem válasszon lakcímet / Please select an address --</option>
+        <select id="utcaValaszto" onchange="utcaValtozott()">
+            <option value="">-- Kérem válasszon lakcímet / Select address --</option>
         </select>
+
+        <div id="hazszamTarolo">
+            <p style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold; color: var(--btn-bg); text-align: left;">
+                Ehhez az utcához szükséges a házszám is:
+            </p>
+            <input type="number" id="hazszam" placeholder="Házszám (pl. 12)" min="1">
+        </div>
 
         <button onclick="iranyitas()">Időpontfoglalás / Book an appointment</button>
 
@@ -140,7 +161,7 @@
             <h4>📍 Rendelőnk címe / Our Address</h4>
             <p>5130 Jászapáti, Petőfi Sándor út 4-6. (Egészségház)</p>
             <iframe 
-                src="https://maps.google.com/maps?q=Jászapáti,Petőfi+Sándor+út+4-6&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                src="https://maps.google.com/maps?q=5130%20J%C3%A1szap%C3%A1ti,%20Pet%C5%91fi%20S%C3%A1ndor%20%C3%BAt%204-6.&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                 width="100%" 
                 height="250" 
                 style="border:0;" 
@@ -158,49 +179,94 @@
         const orvos2Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0C-TewK3hvCQndFFdoKo0RPuyMBgsf6Uodjp8K0G-TJiyqNh7S9egQv9HHxbtoL7JqGnA8kCAm";
 
         // =================================================================
-        // AZ UTCALISTÁK (A hivatalos, 2/2017. PDF 3. számú melléklete alapján)
+        // AZ UTCALISTÁK ÉS A LOGIKA (PDF alapján)
         // =================================================================
 
-        // 1-es FOGORVOSI KÖRZET (Az Ön körzete)
-        const korzet1Szoveg = "Ady Endre utca, Akácfa utca, Álmos utca, Alsónyomás tanya, Antal utca, Aradi utca, Árpád Vezér utca, Balajti Illésné utca (1-17 és 2-12), Balassi Bálint utca, Bartók Béla utca, Béke utca, Bem Apó utca, Bercsényi utca, Borbás utca (1-9 és 2-26), Busai utca, Csaba vezér utca, Csajági utca, Csátés tanya 2., Csintó utca, Damjanich út, Dankó Pista utca, Dobó utca, Dósa utca, Esze Tamás utca, Farkas utca, Felsőnyomás tanya, Felvégi utca, Gábor Áron utca, Galamb utca, Gazda-farm 1., Gyeplegelő tanya, Hét-vezért utca, Hold utca, Ilona utca, István király út (26-tól végig és a páratlan oldal), István Major, Jásziványi út, Jászkapitány utca, Jókai utca, József Attila utca (10-től végig és 15-től végig), Kazinczy utca, Kinizsi utca, Kisfaludy utca, Kisjárási utca (1-19 és 2-50), Kocsér utca, Korona utca (2-20), Kossuth Lajos út, Lados utca (1-33 és 2-24), Lehel utca (páros oldal és 1-11), Mező utca, Munkácsy tér, Munkás utca, Nap utca, Nyúl utca, Orgona utca, Petőfi Sándor út (2-20), Pélyi út, Rákóczi utca, Rapi utca, Rózsa utca, Sas utca, Simon Ignác utca, Somogyi Béla utca, Sóti utca, Széchényi utca (páros oldala), Szigligeti utca, Szikszai Gábor utca, Szögvégi utca, Szőlő utca (36-végig és 39-től végig), Szűcs utca, Tabáni utca, Temető utca, Tó utca, Tompa Mihály utca, Tóth utca, Uj utca, Vágó Pál utca, Városkert utca, Vasút utca, Vasvári utca, Viola utca, Winkler István utca, Zenész utca, Jászivány - Akácfa utca, Jászivány - Köves út, Jászivány - Fő út, Jászivány - Rózsa utca, Jászivány - Kossuth utca";
+        const korzet1Tiszta = [ "Ady Endre utca", "Akácfa utca", "Álmos utca", "Alsónyomás tanya", "Antal utca", "Aradi utca", "Árpád Vezér utca", "Balassi Bálint utca", "Bartók Béla utca", "Béke utca", "Bem Apó utca", "Bercsényi utca", "Busai utca", "Csaba vezér utca", "Csajági utca", "Csátés tanya 2.", "Csintó utca", "Damjanich út", "Dankó Pista utca", "Dobó utca", "Dósa utca", "Esze Tamás utca", "Farkas utca", "Felsőnyomás tanya", "Felvégi utca", "Gábor Áron utca", "Galamb utca", "Gazda-farm 1.", "Gyeplegelő tanya", "Hét-vezért utca", "Hold utca", "Ilona utca", "István Major", "Jásziványi út", "Jászkapitány utca", "Jókai utca", "Kazinczy utca", "Kinizsi utca", "Kisfaludy utca", "Kocsér utca", "Kossuth Lajos út", "Mező utca", "Munkácsy tér", "Munkás utca", "Nap utca", "Nyúl utca", "Orgona utca", "Pélyi út", "Rákóczi utca", "Rapi utca", "Rózsa utca", "Sas utca", "Simon Ignác utca", "Somogyi Béla utca", "Sóti utca", "Szigligeti utca", "Szikszai Gábor utca", "Szögvégi utca", "Szűcs utca", "Tabáni utca", "Temető utca", "Tó utca", "Tompa Mihály utca", "Tóth utca", "Uj utca", "Vágó Pál utca", "Városkert utca", "Vasút utca", "Vasvári utca", "Viola utca", "Winkler István utca", "Zenész utca", "Jászivány - Akácfa utca", "Jászivány - Köves út", "Jászivány - Fő út", "Jászivány - Rózsa utca", "Jászivány - Kossuth utca" ];
+        const korzet2Tiszta = [ "Alkotmány utca", "Arany János utca", "Árvai utca", "Attila utca", "Balla utca", "Beöthy István utca", "Berdó utca", "Berente utca", "Bethlen Gábor utca", "Bocskai utca", "Bódi utca", "Budai utca", "Csátés tanyák", "Diófa utca", "Dózsa György utca", "Dr. Szlovencsák Imre út", "Erdei utca", "Erkel Ferenc út", "Farkas tanyák", "Fasor utca", "Fekete utca", "Fürdő utca", "Fürj utca", "Fűzfa utca", "Gojsza utca", "Gyöngyvirág utca", "Győri utca", "Hársfa utca", "Holló utca", "Honvéd utca", "Hősök tere", "Hunyadi utca", "Huszár utca", "Ibolya utca", "István király park", "Ivanics utca", "Jászkun utca", "Jázmin utca", "Juhász Máté utca", "Kálmán utca", "Kard utca", "Kaszásrét tanya", "Kikelet utca", "Király tanya", "Koczka utca", "Kolozsvári utca", "Léhi utca", "Liliom utca", "Liszt Ferenc utca", "Litkey Máté tér", "Lóczi utca", "Losonczi utca", "Madách utca", "Mag utca", "Magyar utca", "Makkos tanya", "Makó utca", "Malom utca", "Margaréta utca", "Mókus utca", "Nagyszék tanya", "Napsugár utca", "Nefelejcs utca", "Nyár utca", "Nyárfás utca", "Nyil utca", "Nyírfa utca", "Nyitrai utca", "Pacsirta utca", "Pajzs utca", "Palotási János utca", "Parajos tanya", "Parkerdő utca", "Rezeda utca", "Róka utca", "Rozmaring utca", "Rusvai utca", "Simonyi óbester utca", "Síp utca", "Sólyom utca", "Sport utca", "Szabadság utca", "Szegfű utca", "Táncsics út", "Tanya tanya 069/4", "Tél utca", "Temesvári utca", "Tulipán utca", "Tüzér utca", "Utassi utca", "Vince utca", "Vörösmarty utca", "Zrínyi utca", "Jászivány - Alkotmány utca", "Jászivány - Szabadság utca", "Jászivány - Jász utca", "Jászivány - Turul utca", "Jászivány - Petőfi utca" ];
 
-        // 2-es FOGORVOSI KÖRZET (A kolléga körzete)
-        const korzet2Szoveg = "Alkotmány utca, Arany János utca, Árvai utca, Attila utca, Balajti Illésné út (14-től végig és 19-től végig), Balla utca, Beöthy István utca, Berdó utca, Berente utca, Bethlen Gábor utca, Bocskai utca, Bódi utca, Borbás utca (28-tól végig és 11-től végig), Budai utca, Csátés tanyák, Diófa utca, Dózsa György utca, Dr. Szlovencsák Imre út, Erdei utca, Erkel Ferenc út, Farkas tanyák, Fasor utca, Fekete utca, Fürdő utca, Fürj utca, Fűzfa utca, Gojsza utca, Gyöngyvirág utca, Győri utca, Hársfa utca, Holló utca, Honvéd utca, Hősök tere, Hunyadi utca, Huszár utca, Ibolya utca, István király park, István király út (2-24), Ivanics utca, Jászkun utca, Jázmin utca, József Attila út (1-13 és 2-8), Juhász Máté utca, Kálmán utca, Kard utca, Kaszásrét tanya, Kikelet utca, Király tanya, Kisjárási utca (21-től végig és 52-től végig), Koczka utca, Kolozsvári utca, Korona utca (22-től végig), Lados utca (26-tól végig és 35-től végig), Lehel utca (13-63), Léhi utca, Liliom utca, Liszt Ferenc utca, Litkey Máté tér, Lóczi utca, Losonczi utca, Madách utca, Mag utca, Magyar utca, Makkos tanya, Makó utca, Malom utca, Margaréta utca, Mókus utca, Nagyszék tanya, Napsugár utca, Nefelejcs utca, Nyár utca, Nyárfás utca, Nyil utca, Nyírfa utca, Nyitrai utca, Pacsirta utca, Pajzs utca, Palotási János utca, Parajos tanya, Parkerdő utca, Petőfi Sándor út (20-tól végig és a páratlan oldal), Rezeda utca, Róka utca, Rozmaring utca, Rusvai utca, Simonyi óbester utca, Síp utca, Sólyom utca, Sport utca, Szabadság utca, Széchényi utca (páratlan oldal), Szegfű utca, Szőlő utca (2-34 és 1-37), Táncsics út, Tanya tanya 069/4, Tél utca, Temesvári utca, Tulipán utca, Tüzér utca, Utassi utca, Vince utca, Vörösmarty utca, Zrínyi utca, Jászivány - Alkotmány utca, Jászivány - Szabadság utca, Jászivány - Jász utca, Jászivány - Turul utca, Jászivány - Petőfi utca";
-
-        // =================================================================
-        // A PROGRAM LOGIKÁJA
-        // =================================================================
-
-        let korzet1Lista = korzet1Szoveg.split(',').map(utca => utca.trim()).filter(utca => utca.length > 0);
-        let korzet2Lista = korzet2Szoveg.split(',').map(utca => utca.trim()).filter(utca => utca.length > 0);
+        const megosztottUtcak = {
+            "Balajti Illésné utca": (szam) => { return (szam % 2 !== 0) ? (szam <= 17 ? 1 : 2) : (szam <= 12 ? 1 : 2); },
+            "Borbás utca": (szam) => { return (szam % 2 !== 0) ? (szam <= 9 ? 1 : 2) : (szam <= 26 ? 1 : 2); },
+            "István király út": (szam) => { return (szam % 2 !== 0) ? 1 : (szam >= 26 ? 1 : 2); },
+            "József Attila utca": (szam) => { return (szam % 2 !== 0) ? (szam >= 15 ? 1 : 2) : (szam >= 10 ? 1 : 2); },
+            "Kisjárási utca": (szam) => { return (szam % 2 !== 0) ? (szam <= 19 ? 1 : 2) : (szam <= 50 ? 1 : 2); },
+            "Korona utca": (szam) => { return (szam <= 20 ? 1 : 2); },
+            "Lados utca": (szam) => { return (szam % 2 !== 0) ? (szam <= 33 ? 1 : 2) : (szam <= 24 ? 1 : 2); },
+            "Lehel utca": (szam) => { return (szam % 2 === 0) ? 1 : (szam <= 11 ? 1 : 2); },
+            "Petőfi Sándor út": (szam) => { return (szam % 2 === 0) ? (szam <= 20 ? 1 : 2) : 2; },
+            "Széchényi utca": (szam) => { return (szam % 2 === 0) ? 1 : 2; },
+            "Szőlő utca": (szam) => { return (szam % 2 !== 0) ? (szam >= 39 ? 1 : 2) : (szam >= 36 ? 1 : 2); }
+        };
 
         let osszesUtca = [];
-        korzet1Lista.forEach(utca => osszesUtca.push({ nev: utca, korzet: 1 }));
-        korzet2Lista.forEach(utca => osszesUtca.push({ nev: utca, korzet: 2 }));
-
+        korzet1Tiszta.forEach(u => osszesUtca.push({ nev: u, tipus: "1" }));
+        korzet2Tiszta.forEach(u => osszesUtca.push({ nev: u, tipus: "2" }));
+        Object.keys(megosztottUtcak).forEach(u => osszesUtca.push({ nev: u, tipus: "okos" }));
         osszesUtca.sort((a, b) => a.nev.localeCompare(b.nev, 'hu'));
+
+        // =================================================================
+        // VEZÉRLÉS
+        // =================================================================
 
         window.onload = function() {
             const selectElem = document.getElementById("utcaValaszto");
             osszesUtca.forEach(utca => {
                 let option = document.createElement("option");
-                option.value = utca.korzet; 
+                option.value = utca.tipus; 
+                option.dataset.utcanev = utca.nev; 
                 option.text = utca.nev;
                 selectElem.appendChild(option);
             });
         };
 
-        function iranyitas() {
-            const valasztottKorzet = document.getElementById("utcaValaszto").value;
+        // Figyeli, hogy kell-e kérni házszámot
+        function utcaValtozott() {
+            const valasztottTipus = document.getElementById("utcaValaszto").value;
+            const hazszamTarolo = document.getElementById("hazszamTarolo");
+            const hazszamMezo = document.getElementById("hazszam");
 
-            if (valasztottKorzet === "") {
+            if (valasztottTipus === "okos") {
+                hazszamTarolo.style.display = "block"; // Megmutatja a házszámos dobozt
+                hazszamMezo.value = ""; 
+                hazszamMezo.focus(); 
+            } else {
+                hazszamTarolo.style.display = "none"; // Elrejti, ha nem kell
+            }
+        }
+
+        // Gomb megnyomása
+        function iranyitas() {
+            const selectElem = document.getElementById("utcaValaszto");
+            const valasztottTipus = selectElem.value;
+            const utcanev = valasztottTipus ? selectElem.options[selectElem.selectedIndex].dataset.utcanev : "";
+            const hazszam = document.getElementById("hazszam").value;
+
+            if (valasztottTipus === "") {
                 alert("Kérem, a továbblépéshez előbb válassza ki a lakcímét! / Please select your address first!");
                 return;
             }
 
-            if (valasztottKorzet === "1") {
+            let vegsoKorzet = 0;
+
+            if (valasztottTipus === "1") vegsoKorzet = 1;
+            if (valasztottTipus === "2") vegsoKorzet = 2;
+            
+            // Ha OKOS utca, lefuttatjuk a matematikát
+            if (valasztottTipus === "okos") {
+                if (hazszam === "") {
+                    alert("Ehhez az utcához kötelező megadni a házszámot a pontos besoroláshoz! / Please enter your house number!");
+                    document.getElementById("hazszam").focus();
+                    return;
+                }
+                const szam = parseInt(hazszam, 10);
+                vegsoKorzet = megosztottUtcak[utcanev](szam);
+            }
+
+            // ÁTIRÁNYÍTÁS A MEGFELELŐ NAPTÁRBA
+            if (vegsoKorzet === 1) {
                 window.location.href = orvos1Link;
-            } else if (valasztottKorzet === "2") {
+            } else if (vegsoKorzet === 2) {
                 window.location.href = orvos2Link;
             }
         }
