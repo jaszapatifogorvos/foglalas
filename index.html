@@ -76,8 +76,12 @@
         h2 { margin-top: 0; margin-bottom: 5px; font-size: 26px; font-weight: bold; }
         h3 { color: var(--text-muted); margin-top: 0; margin-bottom: 25px; font-weight: 400; font-size: 18px; }
         
+        /* EGYSÉGESÍTETT INSTRUKCIÓ SZÖVEG */
         p.instrukcio { 
-            font-size: 17px; font-weight: 500; line-height: 1.5; margin-bottom: 25px; 
+            font-size: 17px; 
+            font-weight: 500; 
+            line-height: 1.5; 
+            margin-bottom: 25px; 
         }
         
         select, input[type="number"] { 
@@ -87,12 +91,11 @@
             box-sizing: border-box; transition: all 0.3s ease;
         }
         select { cursor: pointer; }
-        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-primary); box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15); }
+        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-primary); box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15); }
         
         #hazszamTarolo { display: none; margin-bottom: 25px; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FŐ GOMBOK ALAP STÍLUSA */
         .btn-fomenu { 
             border: none; padding: 16px 20px; font-size: 17px; 
             border-radius: 10px; cursor: pointer; width: 100%; 
@@ -103,7 +106,6 @@
         .btn-elsodleges { background-color: var(--btn-primary); color: var(--btn-text); margin-top: 10px; }
         .btn-elsodleges:hover { background-color: var(--btn-primary-hover); }
 
-        /* VISSZAKERÜLTEK A KERETEK */
         .btn-masodlagos { 
             background-color: transparent; color: var(--btn-primary); 
             border: 2px solid var(--btn-primary); margin-top: 15px;
@@ -121,7 +123,6 @@
             border: 1px solid var(--border-color); margin-bottom: 12px; padding: 20px; font-size: 17px; 
         }
         .btn-orvos:hover { border-color: var(--btn-primary); background-color: var(--phone-bg); }
-
 
         .elvalaszto {
             display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 14px; margin: 25px 0 10px 0;
@@ -197,8 +198,11 @@
         <h3 class="tr" data-hu="Online időpontfoglalás" data-en="Online Appointment Booking">Online időpontfoglalás</h3>
         
         <div id="alapNezet" class="nezet">
-            <p class="instrukcio tr" data-hu="Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja." data-en="Please select your address from the list! The system will direct you to the appropriate dentist.">
-                Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.
+            <p class="instrukcio tr" 
+               data-hu="Kérem, válassza ki a listából a lakcímét!<br>A rendszer a körzetének megfelelő orvoshoz irányítja." 
+               data-en="Please select your address from the list!<br>The system will direct you to the appropriate dentist.">
+                Kérem, válassza ki a listából a lakcímét!<br>
+                A rendszer a körzetének megfelelő orvoshoz irányítja.
             </p>
 
             <select id="utcaValaszto" onchange="utcaValtozott()">
@@ -238,7 +242,7 @@
         <div class="terkep-doboz">
             <h4 class="tr" data-hu="📍 Rendelőnk címe" data-en="📍 Our Address">📍 Rendelőnk címe</h4>
             <p>5130 Jászapáti, Petőfi Sándor út 4-6.</p>
-            <iframe src="https://maps.google.com/maps?q=5130%20J%C3%A1szap%C3%A1ti,%20Pet%C5%91fi%20S%C3%A1ndor%20%C3%BAt%204-6.&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2685.2504953372293!2d20.143242076935272!3d47.698944581452285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x474136423cc0f869%3A0xc0c897f1f94d932e!2zSsOhc3phcMOhdGksIFBldMWRZmkgU8OhbmRvciB1dCA0LTYsIDUxMzA!5e0!3m2!1shu!2shu!4v1709230000000!5m2!1shu!2shu" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 
@@ -294,33 +298,22 @@
     </div>
 
     <script>
-        // Nyelvi beállítás kezelése
         let aktualisNyelv = 'hu';
 
         function valtsNyelvet(nyelv) {
             aktualisNyelv = nyelv;
-            
-            // Gombok stílusának frissítése
             document.getElementById('btn-hu').classList.toggle('aktiv', nyelv === 'hu');
             document.getElementById('btn-en').classList.toggle('aktiv', nyelv === 'en');
-
-            // Normál szövegek cseréje
             document.querySelectorAll('.tr').forEach(elem => {
                 elem.innerHTML = elem.getAttribute('data-' + nyelv);
             });
-
-            // Input Placeholderek cseréje
             document.querySelectorAll('.tr-ph').forEach(elem => {
                 elem.placeholder = elem.getAttribute('data-' + nyelv);
             });
-
-            // A legördülő menü alap opciójának cseréje
             const pText = nyelv === 'hu' ? "-- Kérem válasszon lakcímet --" : "-- Please select your address --";
             document.getElementById('utcaPlaceholder').innerText = pText;
         }
 
-
-        // Eredeti funkciók
         const orvos1Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ33_dOoB25zF0iL4Pc73e2WKdozTIp-WZdIsL0T24jynfX_FSKOBzlcbvMj4JdUkXRUE8IhHw-K";
         const orvos2Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0C-TewK3hvCQndFFdoKo0RPuyMBgsf6Uodjp8K0G-TJiyqNh7S9egQv9HHxbtoL7JqGnA8kCAm";
 
@@ -362,7 +355,6 @@
             const valasztottTipus = document.getElementById("utcaValaszto").value;
             const hazszamTarolo = document.getElementById("hazszamTarolo");
             const hazszamMezo = document.getElementById("hazszam");
-
             if (valasztottTipus === "okos") {
                 hazszamTarolo.style.display = "block"; 
                 hazszamMezo.value = ""; 
@@ -384,7 +376,6 @@
             }
         }
 
-        /* --- ÁRLISTA FUNKCIÓK --- */
         function megnyitArlista() {
             document.getElementById('arlistaModal').classList.add('lathato');
             document.body.style.overflow = 'hidden'; 
@@ -405,16 +396,13 @@
             const valasztottTipus = selectElem.value;
             const utcanev = valasztottTipus ? selectElem.options[selectElem.selectedIndex].dataset.utcanev : "";
             const hazszam = document.getElementById("hazszam").value;
-
             if (valasztottTipus === "") { 
                 alert(aktualisNyelv === 'hu' ? "Kérem, a továbblépéshez előbb válassza ki a lakcímét!" : "Please select your address first!"); 
                 return; 
             }
-
             let vegsoKorzet = 0;
             if (valasztottTipus === "1") vegsoKorzet = 1;
             if (valasztottTipus === "2") vegsoKorzet = 2;
-            
             if (valasztottTipus === "okos") {
                 if (hazszam === "") { 
                     alert(aktualisNyelv === 'hu' ? "Ehhez az utcához kötelező megadni a házszámot!" : "A house number is required for this street!"); 
@@ -423,7 +411,6 @@
                 const szam = parseInt(hazszam, 10);
                 vegsoKorzet = megosztottUtcak[utcanev](szam);
             }
-
             if (vegsoKorzet === 1) window.location.href = orvos1Link;
             else if (vegsoKorzet === 2) window.location.href = orvos2Link;
         }
