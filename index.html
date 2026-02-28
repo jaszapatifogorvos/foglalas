@@ -82,14 +82,29 @@
             margin-bottom: 25px; 
         }
         
+        /* MEGNÖVELT MEZŐMAGASSÁG AZ EGYSÉGESSÉGÉRT */
         select, input[type="number"] { 
-            width: 100%; padding: 16px 20px; margin: 15px 0; font-size: 17px; 
-            font-weight: 500; border-radius: 10px; border: 2px solid var(--border-color); 
-            background-color: var(--input-bg); color: var(--text-main);
-            box-sizing: border-box; transition: all 0.3s ease;
+            width: 100%; 
+            padding: 16px 20px; /* Ugyanaz a magasság, mint a gomboké */
+            margin: 15px 0; 
+            font-size: 17px; 
+            font-weight: 500; 
+            border-radius: 10px; 
+            border: 2px solid var(--border-color); 
+            background-color: var(--input-bg); 
+            color: var(--text-main);
+            box-sizing: border-box; 
+            transition: all 0.3s ease;
+            appearance: none; /* Apple stílusú select tisztítás */
+            -webkit-appearance: none;
         }
-        select { cursor: pointer; }
-        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-primary); box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15); }
+        select { 
+            cursor: pointer; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+        }
+        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-primary); box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15); }
         
         #hazszamTarolo { display: none; margin-bottom: 25px; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -218,7 +233,7 @@
             
             <div class="elvalaszto tr" data-hu="VAGY" data-en="OR">VAGY</div>
 
-            <button class="btn-fomenu btn-masodlagos tr" onclick="nezetValtas('kulsos')" data-hu="Nem jászapáti lakos vagyok" data-en="I am not a resident of Jászapáti">Nem jászapáti lakos vagyok</button>
+            <button class="btn-fomenu btn-masodlagos tr" onclick="nezetValtas('kulsos')" data-hu="Nem helyi lakos vagyok" data-en="I am not a local resident">Nem helyi lakos vagyok</button>
         </div>
 
         <div id="kulsosNezet" class="nezet" style="display: none;">
@@ -240,7 +255,7 @@
         <div class="terkep-doboz">
             <h4 class="tr" data-hu="📍 Rendelőnk címe" data-en="📍 Our Address">📍 Rendelőnk címe</h4>
             <p>5130 Jászapáti, Petőfi Sándor út 4-6.</p>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2685.2504953372293!2d20.143242076935272!3d47.698944581452285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x474136423cc0f869%3A0xc0c897f1f94d932e!2zSsOhc3phcMOhdGksIFBldMWRZmkgU8OhbmRvciB1dCA0LTYsIDUxMzA!5e0!3m2!1shu!2shu!4v1709230000000!5m2!1shu!2shu" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2691.077226500473!2d20.14449837731295!3d47.52731809347576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47417e2e85497237%3A0xc341f2385966d54c!2zSsOhc3phcMOhdGksIFBldMWRZmkgU8OhbmRvciB1dCA0LTYsIDUxMzA!5e0!3m2!1shu!2shu!4v1710000000000!5m2!1shu!2shu" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </div>
 
