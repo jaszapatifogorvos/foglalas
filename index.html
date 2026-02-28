@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jászapáti Körzeti Fogászat - Időpontfoglalás</title>
+    <title>Jászapáti Fogászat - Időpontfoglalás</title>
     <style>
-        /* Színváltozók (Világos mód - Alapértelmezett) */
+        /* Színváltozók (Világos mód) */
         :root {
             --bg-color: #f4f7f6;
             --box-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #cccccc;
-            --btn-bg: #0056b3;
-            --btn-hover: #004494;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --border-color: #d2d2d7;
+            --btn-primary: #0071e3;
+            --btn-primary-hover: #0077ed;
             --btn-text: #ffffff;
             --phone-bg: #eaf4ff;
-            --phone-border: #0056b3;
-            --link-color: #0056b3;
+            --phone-border: #0071e3;
+            --link-color: #0071e3;
             --input-bg: #ffffff;
+            --free-color: #28a745;
+            --toggle-bg: #e8e8ed;
         }
 
-        /* Sötét mód beállításai (Automatikusan aktiválódik a telefon beállítása alapján) */
+        /* Sötét mód */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-color: #121212;
@@ -29,195 +31,298 @@
                 --text-main: #e0e0e0;
                 --text-muted: #aaaaaa;
                 --border-color: #444444;
-                --btn-bg: #0a84ff;
-                --btn-hover: #0066cc;
+                --btn-primary: #0a84ff;
+                --btn-primary-hover: #0066cc;
                 --btn-text: #ffffff;
                 --phone-bg: #1a2a3a;
                 --phone-border: #0a84ff;
                 --link-color: #66b3ff;
                 --input-bg: #2c2c2c;
+                --free-color: #32d74b;
+                --toggle-bg: #2c2c2e;
             }
         }
 
-        /* Általános formázás */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            text-align: center; 
-            padding: 30px 15px; 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
+            text-align: center; padding: 30px 15px; 
+            background-color: var(--bg-color); color: var(--text-main); 
             transition: background-color 0.3s, color 0.3s;
         }
         .doboz { 
-            background: var(--box-bg); 
-            padding: 40px 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
-            max-width: 550px; 
-            margin: 0 auto; 
-            transition: background-color 0.3s, box-shadow 0.3s;
+            background: var(--box-bg); padding: 30px 30px 40px 30px; border-radius: 16px; 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); max-width: 550px; margin: 0 auto; 
+            transition: background-color 0.3s, box-shadow 0.3s; position: relative;
+        }
+
+        /* --- NYELVVÁLTÓ KAPCSOLÓ --- */
+        .nyelv-sav {
+            display: flex; justify-content: flex-end; margin-bottom: 15px;
+        }
+        .nyelv-kapcsolo {
+            display: inline-flex; background-color: var(--toggle-bg); 
+            border-radius: 10px; padding: 3px;
+        }
+        .nyelv-gomb {
+            border: none; background: none; padding: 6px 14px; font-size: 13px; 
+            font-weight: 600; color: var(--text-muted); border-radius: 7px; 
+            cursor: pointer; transition: all 0.2s;
+        }
+        .nyelv-gomb.aktiv {
+            background-color: var(--box-bg); color: var(--text-main);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
-        /* Címsorok */
         h2 { margin-top: 0; margin-bottom: 5px; font-size: 26px; font-weight: bold; }
         h3 { color: var(--text-muted); margin-top: 0; margin-bottom: 25px; font-weight: 400; font-size: 18px; }
-        p.instrukcio { font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
         
-        /* Legördülő menü és beviteli mezők */
+        p.instrukcio { 
+            font-size: 17px; font-weight: 500; line-height: 1.5; margin-bottom: 25px; 
+        }
+        
         select, input[type="number"] { 
-            width: 100%; 
-            padding: 14px; 
-            margin: 15px 0; 
-            font-size: 16px; 
-            border-radius: 8px; 
-            border: 1px solid var(--border-color); 
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            width: 100%; padding: 16px 20px; margin: 15px 0; font-size: 17px; 
+            font-weight: 500; border-radius: 10px; border: 2px solid var(--border-color); 
+            background-color: var(--input-bg); color: var(--text-main);
+            box-sizing: border-box; transition: all 0.3s ease;
         }
         select { cursor: pointer; }
-        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-bg); }
+        select:focus, input[type="number"]:focus { outline: none; border-color: var(--btn-primary); box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15); }
         
-        /* A házszám mező alapból rejtve van */
-        #hazszamTarolo {
-            display: none;
-            margin-bottom: 25px;
-            animation: fadeIn 0.4s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        #hazszamTarolo { display: none; margin-bottom: 25px; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Gombok Általánosan */
-        button { 
-            border: none; padding: 16px 20px; font-size: 18px; 
-            border-radius: 8px; cursor: pointer; width: 100%; 
-            font-weight: 600; transition: all 0.2s; 
+        /* FŐ GOMBOK ALAP STÍLUSA */
+        .btn-fomenu { 
+            border: none; padding: 16px 20px; font-size: 17px; 
+            border-radius: 10px; cursor: pointer; width: 100%; 
+            font-weight: 600; transition: all 0.2s; box-sizing: border-box;
         }
-        button:active { transform: scale(0.98); }
+        .btn-fomenu:active { transform: scale(0.98); }
 
-        /* Kék (elsődleges) gomb */
-        .btn-elsodleges { background-color: var(--btn-bg); color: var(--btn-text); margin-top: 10px; }
-        .btn-elsodleges:hover { background-color: var(--btn-hover); }
+        .btn-elsodleges { background-color: var(--btn-primary); color: var(--btn-text); margin-top: 10px; }
+        .btn-elsodleges:hover { background-color: var(--btn-primary-hover); }
 
-        /* Másodlagos (vonalas) gomb a külsős betegeknek */
+        /* VISSZAKERÜLTEK A KERETEK */
         .btn-masodlagos { 
-            background-color: transparent; color: var(--btn-bg); 
-            border: 2px solid var(--btn-bg); margin-top: 15px; font-size: 16px;
+            background-color: transparent; color: var(--btn-primary); 
+            border: 2px solid var(--btn-primary); margin-top: 15px;
         }
         .btn-masodlagos:hover { background-color: var(--phone-bg); }
+        
+        .btn-info {
+            background-color: transparent; color: var(--text-main); 
+            border: 2px solid var(--border-color); margin-top: 0px; font-size: 16px;
+        }
+        .btn-info:hover { border-color: var(--btn-primary); color: var(--btn-primary); background-color: var(--phone-bg); }
 
-        /* Orvos választó gombok */
-        .btn-orvos { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-bottom: 12px; padding: 20px; font-size: 17px; }
-        .btn-orvos:hover { border-color: var(--btn-bg); background-color: var(--phone-bg); }
+        .btn-orvos { 
+            background-color: var(--bg-color); color: var(--text-main); 
+            border: 1px solid var(--border-color); margin-bottom: 12px; padding: 20px; font-size: 17px; 
+        }
+        .btn-orvos:hover { border-color: var(--btn-primary); background-color: var(--phone-bg); }
 
-        /* Vissza gomb */
-        .btn-vissza { background-color: var(--text-muted); color: #fff; margin-top: 10px; }
-        .btn-vissza:hover { background-color: #555; }
 
-        /* Elválasztó vonal */
         .elvalaszto {
             display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 14px; margin: 25px 0 10px 0;
         }
-        .elvalaszto::before, .elvalaszto::after {
-            content: ''; flex: 1; border-bottom: 1px solid var(--border-color);
-        }
+        .elvalaszto::before, .elvalaszto::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
         .elvalaszto:not(:empty)::before { margin-right: .5em; }
         .elvalaszto:not(:empty)::after { margin-left: .5em; }
         
-        /* Telefonos blokk */
+        .btn-vissza { background-color: var(--text-muted); color: #fff; margin-top: 10px; border: none; }
+        .btn-vissza:hover { background-color: #555; }
+
         .telefon { 
-            margin: 30px 0; padding: 20px; background-color: var(--phone-bg); 
-            border-radius: 8px; border-left: 5px solid var(--phone-border); 
-            transition: background-color 0.3s, border-color 0.3s;
+            margin: 30px 0 20px 0; padding: 20px; background-color: var(--phone-bg); 
+            border-radius: 12px; border-left: 5px solid var(--phone-border); 
         }
         .telefon p { margin: 0 0 8px 0; font-size: 15px; }
-        .telefon a { font-size: 22px; font-weight: bold; color: var(--link-color); text-decoration: none; transition: color 0.3s; }
+        .telefon a { font-size: 22px; font-weight: bold; color: var(--link-color); text-decoration: none; }
         .telefon a:hover { text-decoration: underline; }
 
-        /* Térkép blokk */
-        .terkep-doboz { margin-top: 35px; text-align: left; }
+        .terkep-doboz { margin-top: 30px; text-align: left; }
         .terkep-doboz h4 { margin-bottom: 5px; font-size: 16px; }
         .terkep-doboz p { margin-top: 0; margin-bottom: 15px; font-size: 14px; color: var(--text-muted); }
-        iframe { border-radius: 8px; filter: contrast(1.05); }
+        iframe { border-radius: 12px; filter: contrast(1.05); }
 
-        /* Animáció a nézetváltáshoz */
-        .nezet { animation: fadeIn 0.4s; }
+        /* --- ÁRLISTA MODAL --- */
+        .arlista-hatter {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .arlista-hatter.lathato { opacity: 1; display: flex !important; }
+
+        .arlista-doboz {
+            background: var(--box-bg); width: 95%; max-width: 700px; max-height: 85vh;
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .arlista-hatter.lathato .arlista-doboz { transform: scale(1); }
+
+        .arlista-fejlec {
+            padding: 20px 25px; border-bottom: 1px solid var(--border-color); 
+            display: flex; justify-content: space-between; align-items: center; 
+            background-color: var(--bg-color);
+        }
+        .arlista-fejlec h3 { margin: 0; font-size: 22px; font-weight: bold; color: var(--text-main); }
+        .bezar-kicsi { background: none; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; padding: 0; margin: 0; }
+        .bezar-kicsi:hover { color: #ff3b30; }
+
+        .arlista-tartalom { padding: 0; overflow-y: auto; text-align: left; }
+        table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+        th, td { padding: 14px 20px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        th { text-align: left; background-color: var(--phone-bg); font-weight: 600; position: sticky; top: 0; }
+        .td-ingyenes { color: var(--free-color); font-weight: bold; }
+        .arlista-kategoria { background-color: var(--bg-color); font-weight: bold; color: var(--btn-primary); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover td { background-color: rgba(0,0,0,0.02); }
+        .arlista-lablec { padding: 15px 25px; background-color: var(--bg-color); border-top: 1px solid var(--border-color); font-size: 13px; color: var(--text-muted); line-height: 1.5; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="doboz">
-        <h2>Jászapáti Fogászat</h2>
-        <h3>Online időpontfoglalás / Online booking</h3>
+        
+        <div class="nyelv-sav">
+            <div class="nyelv-kapcsolo">
+                <button id="btn-hu" class="nyelv-gomb aktiv" onclick="valtsNyelvet('hu')">HU</button>
+                <button id="btn-en" class="nyelv-gomb" onclick="valtsNyelvet('en')">EN</button>
+            </div>
+        </div>
+
+        <h2 class="tr" data-hu="Jászapáti Fogászat" data-en="Jászapáti Dental Clinic">Jászapáti Fogászat</h2>
+        <h3 class="tr" data-hu="Online időpontfoglalás" data-en="Online Appointment Booking">Online időpontfoglalás</h3>
         
         <div id="alapNezet" class="nezet">
-            <p class="instrukcio">
-                <b>HU:</b> Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.<br><br>
-                <b>EN:</b> Please select your address from the list!
+            <p class="instrukcio tr" data-hu="Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja." data-en="Please select your address from the list! The system will direct you to the appropriate dentist.">
+                Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.
             </p>
 
             <select id="utcaValaszto" onchange="utcaValtozott()">
-                <option value="">-- Kérem válasszon lakcímet / Select address --</option>
+                <option value="" id="utcaPlaceholder">-- Kérem válasszon lakcímet --</option>
             </select>
 
             <div id="hazszamTarolo">
-                <p style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold; color: var(--btn-bg); text-align: left;">
+                <p style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold; color: var(--btn-primary); text-align: left;" class="tr" data-hu="Ehhez az utcához szükséges a házszám is:" data-en="A house number is required for this street:">
                     Ehhez az utcához szükséges a házszám is:
                 </p>
-                <input type="number" id="hazszam" placeholder="Házszám (pl. 12)" min="1">
+                <input type="number" id="hazszam" class="tr-ph" data-hu="Házszám (pl. 12)" data-en="House number (e.g. 12)" placeholder="Házszám (pl. 12)" min="1">
             </div>
 
-            <button class="btn-elsodleges" onclick="iranyitas()">Tovább a foglaláshoz</button>
+            <button class="btn-fomenu btn-elsodleges tr" onclick="iranyitas()" data-hu="Tovább a foglaláshoz" data-en="Continue to booking">Tovább a foglaláshoz</button>
+            
+            <div class="elvalaszto tr" data-hu="VAGY" data-en="OR">VAGY</div>
 
-            <div class="elvalaszto">VAGY</div>
-
-            <button class="btn-masodlagos" onclick="nezetValtas('kulsos')">Nem jászapáti lakos vagyok</button>
+            <button class="btn-fomenu btn-masodlagos tr" onclick="nezetValtas('kulsos')" data-hu="Nem jászapáti lakos vagyok" data-en="I am not a resident of Jászapáti">Nem jászapáti lakos vagyok</button>
         </div>
 
         <div id="kulsosNezet" class="nezet" style="display: none;">
-            <p class="instrukcio" style="background-color: var(--phone-bg); padding: 15px; border-radius: 8px;">
+            <p class="instrukcio tr" style="background-color: var(--phone-bg); padding: 15px; border-radius: 8px;" data-hu="Körzeten kívüli betegként Ön szabadon választhat a rendelő orvosai közül. Kérem, kattintson a választott orvos nevére!" data-en="As a non-resident patient, you can freely choose between our dentists. Please click on the name of your preferred dentist!">
                 Körzeten kívüli betegként Ön szabadon választhat a rendelő orvosai közül. Kérem, kattintson a választott orvos nevére!
             </p>
-
-            <button class="btn-orvos" onclick="kulsosIranyitas(1)">👨‍⚕️ I. Körzet (Dr. Stefán Csaba)</button>
-            <button class="btn-orvos" onclick="kulsosIranyitas(2)">👩‍⚕️ II. Körzet (Dr. Sebestyén Kata)</button>
-            
-            <button class="btn-vissza" onclick="nezetValtas('alap')">⬅ Vissza a Jászapáti utcákhoz</button>
+            <button class="btn-fomenu btn-orvos tr" onclick="kulsosIranyitas(1)" data-hu="👨‍⚕️ I. Körzet (Dr. Stefán Csaba)" data-en="👨‍⚕️ District I (Dr. Stefán Csaba)">👨‍⚕️ I. Körzet (Dr. Stefán Csaba)</button>
+            <button class="btn-fomenu btn-orvos tr" onclick="kulsosIranyitas(2)" data-hu="👩‍⚕️ II. Körzet (Dr. Sebestyén Kata)" data-en="👩‍⚕️ District II (Dr. Sebestyén Kata)">👩‍⚕️ II. Körzet (Dr. Sebestyén Kata)</button>
+            <button class="btn-fomenu btn-vissza tr" onclick="nezetValtas('alap')" data-hu="⬅ Vissza" data-en="⬅ Back">⬅ Vissza</button>
         </div>
 
         <div class="telefon">
-            <p>📞 Időpontfoglalás telefonon is lehetséges: <br> <i>Phone booking also available:</i></p>
+            <p class="tr" data-hu="📞 Időpontfoglalás telefonon is lehetséges:" data-en="📞 Phone booking is also available:">📞 Időpontfoglalás telefonon is lehetséges:</p>
             <a href="tel:+3657440338">+36 57 440 338</a>
         </div>
 
+        <button class="btn-fomenu btn-info tr" onclick="megnyitArlista()" data-hu="Árlista" data-en="Price List">Árlista</button>
+
         <div class="terkep-doboz">
-            <h4>📍 Rendelőnk címe / Our Address</h4>
-            <p>5130 Jászapáti, Petőfi Sándor út 4-6. (Egészségház)</p>
-            <iframe 
-                src="https://maps.google.com/maps?q=5130%20J%C3%A1szap%C3%A1ti,%20Pet%C5%91fi%20S%C3%A1ndor%20%C3%BAt%204-6.&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                width="100%" 
-                height="250" 
-                style="border:0;" 
-                allowfullscreen="" 
-                loading="lazy">
-            </iframe>
+            <h4 class="tr" data-hu="📍 Rendelőnk címe" data-en="📍 Our Address">📍 Rendelőnk címe</h4>
+            <p>5130 Jászapáti, Petőfi Sándor út 4-6.</p>
+            <iframe src="https://maps.google.com/maps?q=5130%20J%C3%A1szap%C3%A1ti,%20Pet%C5%91fi%20S%C3%A1ndor%20%C3%BAt%204-6.&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div id="arlistaModal" class="arlista-hatter">
+        <div class="arlista-doboz">
+            <div class="arlista-fejlec">
+                <h3 class="tr" data-hu="Árlista" data-en="Price List">Árlista</h3>
+                <button class="bezar-kicsi" onclick="bezarArlista()">×</button>
+            </div>
+            <div class="arlista-tartalom">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="tr" data-hu="Kezelés megnevezése" data-en="Treatment">Kezelés megnevezése</th>
+                            <th class="tr" data-hu="Magánellátás" data-en="Private Care">Magánellátás</th>
+                            <th class="tr" data-hu="TB támogatott" data-en="State Funded (TAJ)">TB támogatott</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" class="arlista-kategoria tr" data-hu="Konzultáció és Prevenció" data-en="Consultation and Prevention">Konzultáció és Prevenció</td></tr>
+                        <tr><td class="tr" data-hu="Állapotfelmérés, konzultáció" data-en="Check-up, consultation">Állapotfelmérés, konzultáció</td><td class="tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Fogkőeltávolítás és polírozás" data-en="Scaling and polishing">Fogkőeltávolítás és polírozás</td><td class="tr" data-hu="20.000 Ft" data-en="20,000 HUF">20.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        
+                        <tr><td colspan="3" class="arlista-kategoria tr" data-hu="Tömések és Gyökérkezelés" data-en="Fillings and Root Canal Treatment">Tömések és Gyökérkezelés</td></tr>
+                        <tr><td class="tr" data-hu="Esztétikus tömés – 1 felszínű" data-en="Aesthetic filling – 1 surface">Esztétikus tömés – 1 felszínű</td><td class="tr" data-hu="20.000 Ft" data-en="20,000 HUF">20.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Esztétikus tömés – 2 felszínű" data-en="Aesthetic filling – 2 surfaces">Esztétikus tömés – 2 felszínű</td><td class="tr" data-hu="25.000 Ft" data-en="25,000 HUF">25.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Esztétikus tömés – 3 felszínű" data-en="Aesthetic filling – 3 surfaces">Esztétikus tömés – 3 felszínű</td><td class="tr" data-hu="30.000 Ft" data-en="30,000 HUF">30.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Gépi gyökérkezelés – 1 csatornás" data-en="Machine root canal – 1 canal">Gépi gyökérkezelés – 1 csatornás</td><td class="tr" data-hu="35.000 Ft" data-en="35,000 HUF">35.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Gépi gyökérkezelés – 2 csatornás" data-en="Machine root canal – 2 canals">Gépi gyökérkezelés – 2 csatornás</td><td class="tr" data-hu="40.000 Ft" data-en="40,000 HUF">40.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Gépi gyökérkezelés – 3 csatornás" data-en="Machine root canal – 3 canals">Gépi gyökérkezelés – 3 csatornás</td><td class="tr" data-hu="50.000 Ft" data-en="50,000 HUF">50.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Üvegszálas csapos csonkfelépítés" data-en="Fiberglass post core build-up">Üvegszálas csapos csonkfelépítés</td><td class="tr" data-hu="35.000 Ft" data-en="35,000 HUF">35.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Gyökérkezelt fog belső fehérítése" data-en="Internal bleaching of treated tooth">Gyökérkezelt fog belső fehérítése</td><td class="tr" data-hu="25.000 Ft" data-en="25,000 HUF">25.000 Ft</td><td class="tr" data-hu="25.000 Ft" data-en="25,000 HUF">25.000 Ft</td></tr>
+                        
+                        <tr><td colspan="3" class="arlista-kategoria tr" data-hu="Szájsebészet" data-en="Oral Surgery">Szájsebészet</td></tr>
+                        <tr><td class="tr" data-hu="Fogeltávolítás fogóval" data-en="Tooth extraction (forceps)">Fogeltávolítás fogóval</td><td class="tr" data-hu="20.000 Ft" data-en="20,000 HUF">20.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        <tr><td class="tr" data-hu="Fogeltávolítás emelővel" data-en="Tooth extraction (elevator)">Fogeltávolítás emelővel</td><td class="tr" data-hu="25.000 Ft" data-en="25,000 HUF">25.000 Ft</td><td class="td-ingyenes tr" data-hu="Ingyenes" data-en="Free">Ingyenes</td></tr>
+                        
+                        <tr><td colspan="3" class="arlista-kategoria tr" data-hu="Fogpótlások (Protetika)" data-en="Prosthetics (Crowns, Dentures)">Fogpótlások (Protetika)</td></tr>
+                        <tr><td class="tr" data-hu="Betétek (inlay, onlay) – préskerámia" data-en="Inlay / Onlay – pressed ceramic">Betétek (inlay, onlay) – préskerámia</td><td class="tr" data-hu="50.000 Ft" data-en="50,000 HUF">50.000 Ft</td><td class="tr" data-hu="50.000 Ft" data-en="50,000 HUF">50.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Betétek (inlay) – E-max kerámia" data-en="Inlay / Onlay – E-max ceramic">Betétek (inlay) – E-max kerámia</td><td class="tr" data-hu="60.000 Ft" data-en="60,000 HUF">60.000 Ft</td><td class="tr" data-hu="60.000 Ft" data-en="60,000 HUF">60.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Koronák és hidak – fémkerámia" data-en="Crowns and bridges – metal-ceramic">Koronák és hidak – fémkerámia</td><td class="tr" data-hu="50.000 Ft" data-en="50,000 HUF">50.000 Ft</td><td class="tr" data-hu="50.000 Ft" data-en="50,000 HUF">50.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Koronák és hidak – cirkónium" data-en="Crowns and bridges – zirconium">Koronák és hidak – cirkónium</td><td class="tr" data-hu="60.000 Ft" data-en="60,000 HUF">60.000 Ft</td><td class="tr" data-hu="60.000 Ft" data-en="60,000 HUF">60.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Ideiglenes korona (rendelőben)" data-en="Temporary crown (chairside)">Ideiglenes korona (rendelőben)</td><td class="tr" data-hu="5.000 Ft" data-en="5,000 HUF">5.000 Ft</td><td class="tr" data-hu="5.000 Ft" data-en="5,000 HUF">5.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Ideiglenes korona (fogtechnikus)" data-en="Temporary crown (lab-made)">Ideiglenes korona (fogtechnikus)</td><td class="tr" data-hu="15.000 Ft" data-en="15,000 HUF">15.000 Ft</td><td class="tr" data-hu="15.000 Ft" data-en="15,000 HUF">15.000 Ft</td></tr>
+                        <tr><td class="tr" data-hu="Kivehető fogpótlás (állcsontonként)" data-en="Removable denture (per jaw)">Kivehető fogpótlás (állcsontonként)</td><td class="tr" data-hu="120.000 Ft" data-en="120,000 HUF">120.000 Ft</td><td class="td-ingyenes tr" data-hu="60.000 Ft *" data-en="60,000 HUF *">60.000 Ft *</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="arlista-lablec tr" data-hu="<b>* TB támogatott ellátás:</b> Érvényes TAJ kártyával rendelkező páciensek számára. A kivehető fogpótlásra vonatkozó 60.000 Ft-os ár 62 éves kor felett, TB támogatással vehető igénybe." data-en="<b>* State funded care:</b> For patients with valid Hungarian health insurance (TAJ). The 60,000 HUF price for removable dentures applies over 62 years of age with state funding.">
+                <b>* TB támogatott ellátás:</b> Érvényes TAJ kártyával rendelkező páciensek számára. A kivehető fogpótlásra vonatkozó 60.000 Ft-os ár 62 éves kor felett, TB támogatással vehető igénybe.
+            </div>
         </div>
     </div>
 
     <script>
-        // =================================================================
-        // NAPTÁR LINKEK
-        // =================================================================
+        // Nyelvi beállítás kezelése
+        let aktualisNyelv = 'hu';
+
+        function valtsNyelvet(nyelv) {
+            aktualisNyelv = nyelv;
+            
+            // Gombok stílusának frissítése
+            document.getElementById('btn-hu').classList.toggle('aktiv', nyelv === 'hu');
+            document.getElementById('btn-en').classList.toggle('aktiv', nyelv === 'en');
+
+            // Normál szövegek cseréje
+            document.querySelectorAll('.tr').forEach(elem => {
+                elem.innerHTML = elem.getAttribute('data-' + nyelv);
+            });
+
+            // Input Placeholderek cseréje
+            document.querySelectorAll('.tr-ph').forEach(elem => {
+                elem.placeholder = elem.getAttribute('data-' + nyelv);
+            });
+
+            // A legördülő menü alap opciójának cseréje
+            const pText = nyelv === 'hu' ? "-- Kérem válasszon lakcímet --" : "-- Please select your address --";
+            document.getElementById('utcaPlaceholder').innerText = pText;
+        }
+
+
+        // Eredeti funkciók
         const orvos1Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ33_dOoB25zF0iL4Pc73e2WKdozTIp-WZdIsL0T24jynfX_FSKOBzlcbvMj4JdUkXRUE8IhHw-K";
         const orvos2Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0C-TewK3hvCQndFFdoKo0RPuyMBgsf6Uodjp8K0G-TJiyqNh7S9egQv9HHxbtoL7JqGnA8kCAm";
-
-        // =================================================================
-        // AZ UTCALISTÁK ÉS A LOGIKA
-        // =================================================================
 
         const korzet1Tiszta = [ "Ady Endre utca", "Akácfa utca", "Álmos utca", "Alsónyomás tanya", "Antal utca", "Aradi utca", "Árpád Vezér utca", "Balassi Bálint utca", "Bartók Béla utca", "Béke utca", "Bem Apó utca", "Bercsényi utca", "Busai utca", "Csaba vezér utca", "Csajági utca", "Csátés tanya 2.", "Csintó utca", "Damjanich út", "Dankó Pista utca", "Dobó utca", "Dósa utca", "Esze Tamás utca", "Farkas utca", "Felsőnyomás tanya", "Felvégi utca", "Gábor Áron utca", "Galamb utca", "Gazda-farm 1.", "Gyeplegelő tanya", "Hét-vezért utca", "Hold utca", "Ilona utca", "István Major", "Jásziványi út", "Jászkapitány utca", "Jókai utca", "Kazinczy utca", "Kinizsi utca", "Kisfaludy utca", "Kocsér utca", "Kossuth Lajos út", "Mező utca", "Munkácsy tér", "Munkás utca", "Nap utca", "Nyúl utca", "Orgona utca", "Pélyi út", "Rákóczi utca", "Rapi utca", "Rózsa utca", "Sas utca", "Simon Ignác utca", "Somogyi Béla utca", "Sóti utca", "Szigligeti utca", "Szikszai Gábor utca", "Szögvégi utca", "Szűcs utca", "Tabáni utca", "Temető utca", "Tó utca", "Tompa Mihály utca", "Tóth utca", "Uj utca", "Vágó Pál utca", "Városkert utca", "Vasút utca", "Vasvári utca", "Viola utca", "Winkler István utca", "Zenész utca", "Jászivány - Akácfa utca", "Jászivány - Köves út", "Jászivány - Fő út", "Jászivány - Rózsa utca", "Jászivány - Kossuth utca" ];
         const korzet2Tiszta = [ "Alkotmány utca", "Arany János utca", "Árvai utca", "Attila utca", "Balla utca", "Beöthy István utca", "Berdó utca", "Berente utca", "Bethlen Gábor utca", "Bocskai utca", "Bódi utca", "Budai utca", "Csátés tanyák", "Diófa utca", "Dózsa György utca", "Dr. Szlovencsák Imre út", "Erdei utca", "Erkel Ferenc út", "Farkas tanyák", "Fasor utca", "Fekete utca", "Fürdő utca", "Fürj utca", "Fűzfa utca", "Gojsza utca", "Gyöngyvirág utca", "Győri utca", "Hársfa utca", "Holló utca", "Honvéd utca", "Hősök tere", "Hunyadi utca", "Huszár utca", "Ibolya utca", "István király park", "Ivanics utca", "Jászkun utca", "Jázmin utca", "Juhász Máté utca", "Kálmán utca", "Kard utca", "Kaszásrét tanya", "Kikelet utca", "Király tanya", "Koczka utca", "Kolozsvári utca", "Léhi utca", "Liliom utca", "Liszt Ferenc utca", "Litkey Máté tér", "Lóczi utca", "Losonczi utca", "Madách utca", "Mag utca", "Magyar utca", "Makkos tanya", "Makó utca", "Malom utca", "Margaréta utca", "Mókus utca", "Nagyszék tanya", "Napsugár utca", "Nefelejcs utca", "Nyár utca", "Nyárfás utca", "Nyil utca", "Nyírfa utca", "Nyitrai utca", "Pacsirta utca", "Pajzs utca", "Palotási János utca", "Parajos tanya", "Parkerdő utca", "Rezeda utca", "Róka utca", "Rozmaring utca", "Rusvai utca", "Simonyi óbester utca", "Síp utca", "Sólyom utca", "Sport utca", "Szabadság utca", "Szegfű utca", "Táncsics út", "Tanya tanya 069/4", "Tél utca", "Temesvári utca", "Tulipán utca", "Tüzér utca", "Utassi utca", "Vince utca", "Vörösmarty utca", "Zrínyi utca", "Jászivány - Alkotmány utca", "Jászivány - Szabadság utca", "Jászivány - Jász utca", "Jászivány - Turul utca", "Jászivány - Petőfi utca" ];
@@ -241,10 +346,6 @@
         korzet2Tiszta.forEach(u => osszesUtca.push({ nev: u, tipus: "2" }));
         Object.keys(megosztottUtcak).forEach(u => osszesUtca.push({ nev: u, tipus: "okos" }));
         osszesUtca.sort((a, b) => a.nev.localeCompare(b.nev, 'hu'));
-
-        // =================================================================
-        // VEZÉRLÉS
-        // =================================================================
 
         window.onload = function() {
             const selectElem = document.getElementById("utcaValaszto");
@@ -271,7 +372,6 @@
             }
         }
 
-        // Nézetváltó funkció (Alap utcaválasztó <---> Külsős választó)
         function nezetValtas(nezet) {
             if (nezet === 'kulsos') {
                 document.getElementById('alapNezet').style.display = 'none';
@@ -279,55 +379,54 @@
             } else {
                 document.getElementById('kulsosNezet').style.display = 'none';
                 document.getElementById('alapNezet').style.display = 'block';
-                // Nullázzuk az utcaválasztót, ha visszalép
                 document.getElementById("utcaValaszto").value = "";
                 document.getElementById("hazszamTarolo").style.display = "none";
             }
         }
 
-        // Külsős betegek közvetlen átirányítása
-        function kulsosIranyitas(orvos) {
-            if (orvos === 1) {
-                window.location.href = orvos1Link;
-            } else if (orvos === 2) {
-                window.location.href = orvos2Link;
-            }
+        /* --- ÁRLISTA FUNKCIÓK --- */
+        function megnyitArlista() {
+            document.getElementById('arlistaModal').classList.add('lathato');
+            document.body.style.overflow = 'hidden'; 
         }
 
-        // Jászapáti lakosok átirányítása utca és házszám alapján
+        function bezarArlista() {
+            document.getElementById('arlistaModal').classList.remove('lathato');
+            document.body.style.overflow = 'auto'; 
+        }
+
+        function kulsosIranyitas(orvos) {
+            if (orvos === 1) window.location.href = orvos1Link;
+            else if (orvos === 2) window.location.href = orvos2Link;
+        }
+
         function iranyitas() {
             const selectElem = document.getElementById("utcaValaszto");
             const valasztottTipus = selectElem.value;
             const utcanev = valasztottTipus ? selectElem.options[selectElem.selectedIndex].dataset.utcanev : "";
             const hazszam = document.getElementById("hazszam").value;
 
-            if (valasztottTipus === "") {
-                alert("Kérem, a továbblépéshez előbb válassza ki a lakcímét! / Please select your address first!");
-                return;
+            if (valasztottTipus === "") { 
+                alert(aktualisNyelv === 'hu' ? "Kérem, a továbblépéshez előbb válassza ki a lakcímét!" : "Please select your address first!"); 
+                return; 
             }
 
             let vegsoKorzet = 0;
-
             if (valasztottTipus === "1") vegsoKorzet = 1;
             if (valasztottTipus === "2") vegsoKorzet = 2;
             
             if (valasztottTipus === "okos") {
-                if (hazszam === "") {
-                    alert("Ehhez az utcához kötelező megadni a házszámot a pontos besoroláshoz! / Please enter your house number!");
-                    document.getElementById("hazszam").focus();
-                    return;
+                if (hazszam === "") { 
+                    alert(aktualisNyelv === 'hu' ? "Ehhez az utcához kötelező megadni a házszámot!" : "A house number is required for this street!"); 
+                    document.getElementById("hazszam").focus(); return; 
                 }
                 const szam = parseInt(hazszam, 10);
                 vegsoKorzet = megosztottUtcak[utcanev](szam);
             }
 
-            if (vegsoKorzet === 1) {
-                window.location.href = orvos1Link;
-            } else if (vegsoKorzet === 2) {
-                window.location.href = orvos2Link;
-            }
+            if (vegsoKorzet === 1) window.location.href = orvos1Link;
+            else if (vegsoKorzet === 2) window.location.href = orvos2Link;
         }
     </script>
-
 </body>
 </html>
