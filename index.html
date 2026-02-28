@@ -91,30 +91,47 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Gomb */
+        /* Gombok Általánosan */
         button { 
-            background-color: var(--btn-bg); 
-            color: var(--btn-text); 
-            border: none; 
-            padding: 16px 20px; 
-            font-size: 18px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-weight: 600; 
-            margin-top: 10px;
-            transition: background-color 0.3s, transform 0.1s; 
+            border: none; padding: 16px 20px; font-size: 18px; 
+            border-radius: 8px; cursor: pointer; width: 100%; 
+            font-weight: 600; transition: all 0.2s; 
         }
-        button:hover { background-color: var(--btn-hover); }
         button:active { transform: scale(0.98); }
+
+        /* Kék (elsődleges) gomb */
+        .btn-elsodleges { background-color: var(--btn-bg); color: var(--btn-text); margin-top: 10px; }
+        .btn-elsodleges:hover { background-color: var(--btn-hover); }
+
+        /* Másodlagos (vonalas) gomb a külsős betegeknek */
+        .btn-masodlagos { 
+            background-color: transparent; color: var(--btn-bg); 
+            border: 2px solid var(--btn-bg); margin-top: 15px; font-size: 16px;
+        }
+        .btn-masodlagos:hover { background-color: var(--phone-bg); }
+
+        /* Orvos választó gombok */
+        .btn-orvos { background-color: var(--bg-color); color: var(--text-main); border: 1px solid var(--border-color); margin-bottom: 12px; padding: 20px; font-size: 17px; }
+        .btn-orvos:hover { border-color: var(--btn-bg); background-color: var(--phone-bg); }
+
+        /* Vissza gomb */
+        .btn-vissza { background-color: var(--text-muted); color: #fff; margin-top: 10px; }
+        .btn-vissza:hover { background-color: #555; }
+
+        /* Elválasztó vonal */
+        .elvalaszto {
+            display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 14px; margin: 25px 0 10px 0;
+        }
+        .elvalaszto::before, .elvalaszto::after {
+            content: ''; flex: 1; border-bottom: 1px solid var(--border-color);
+        }
+        .elvalaszto:not(:empty)::before { margin-right: .5em; }
+        .elvalaszto:not(:empty)::after { margin-left: .5em; }
         
         /* Telefonos blokk */
         .telefon { 
-            margin: 30px 0; 
-            padding: 20px; 
-            background-color: var(--phone-bg); 
-            border-radius: 8px; 
-            border-left: 5px solid var(--phone-border); 
+            margin: 30px 0; padding: 20px; background-color: var(--phone-bg); 
+            border-radius: 8px; border-left: 5px solid var(--phone-border); 
             transition: background-color 0.3s, border-color 0.3s;
         }
         .telefon p { margin: 0 0 8px 0; font-size: 15px; }
@@ -126,31 +143,51 @@
         .terkep-doboz h4 { margin-bottom: 5px; font-size: 16px; }
         .terkep-doboz p { margin-top: 0; margin-bottom: 15px; font-size: 14px; color: var(--text-muted); }
         iframe { border-radius: 8px; filter: contrast(1.05); }
+
+        /* Animáció a nézetváltáshoz */
+        .nezet { animation: fadeIn 0.4s; }
     </style>
 </head>
 <body>
 
     <div class="doboz">
-        <h2>Jászapáti Körzeti Fogászat</h2>
+        <h2>Jászapáti Fogászat</h2>
         <h3>Online időpontfoglalás / Online booking</h3>
         
-        <p class="instrukcio">
-            <b>HU:</b> Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.<br><br>
-            <b>EN:</b> Please select your address from the list! The system will redirect you to the designated dentist.
-        </p>
-
-        <select id="utcaValaszto" onchange="utcaValtozott()">
-            <option value="">-- Kérem válasszon lakcímet / Select address --</option>
-        </select>
-
-        <div id="hazszamTarolo">
-            <p style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold; color: var(--btn-bg); text-align: left;">
-                Ehhez az utcához szükséges a házszám is:
+        <div id="alapNezet" class="nezet">
+            <p class="instrukcio">
+                <b>HU:</b> Kérem, válassza ki a listából a lakcímét! A rendszer a körzetének megfelelő orvoshoz irányítja.<br><br>
+                <b>EN:</b> Please select your address from the list!
             </p>
-            <input type="number" id="hazszam" placeholder="Házszám (pl. 12)" min="1">
+
+            <select id="utcaValaszto" onchange="utcaValtozott()">
+                <option value="">-- Kérem válasszon lakcímet / Select address --</option>
+            </select>
+
+            <div id="hazszamTarolo">
+                <p style="margin: 0 0 5px 0; font-size: 14px; font-weight: bold; color: var(--btn-bg); text-align: left;">
+                    Ehhez az utcához szükséges a házszám is:
+                </p>
+                <input type="number" id="hazszam" placeholder="Házszám (pl. 12)" min="1">
+            </div>
+
+            <button class="btn-elsodleges" onclick="iranyitas()">Tovább a foglaláshoz</button>
+
+            <div class="elvalaszto">VAGY</div>
+
+            <button class="btn-masodlagos" onclick="nezetValtas('kulsos')">Nem jászapáti lakos vagyok</button>
         </div>
 
-        <button onclick="iranyitas()">Időpontfoglalás / Book an appointment</button>
+        <div id="kulsosNezet" class="nezet" style="display: none;">
+            <p class="instrukcio" style="background-color: var(--phone-bg); padding: 15px; border-radius: 8px;">
+                Körzeten kívüli betegként Ön szabadon választhat a rendelő orvosai közül. Kérem, kattintson a választott orvos nevére!
+            </p>
+
+            <button class="btn-orvos" onclick="kulsosIranyitas(1)">👨‍⚕️ I. Körzet (Dr. Stefán Csaba)</button>
+            <button class="btn-orvos" onclick="kulsosIranyitas(2)">👩‍⚕️ II. Körzet (Dr. Sebestyén Kata)</button>
+            
+            <button class="btn-vissza" onclick="nezetValtas('alap')">⬅ Vissza a Jászapáti utcákhoz</button>
+        </div>
 
         <div class="telefon">
             <p>📞 Időpontfoglalás telefonon is lehetséges: <br> <i>Phone booking also available:</i></p>
@@ -179,7 +216,7 @@
         const orvos2Link = "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0C-TewK3hvCQndFFdoKo0RPuyMBgsf6Uodjp8K0G-TJiyqNh7S9egQv9HHxbtoL7JqGnA8kCAm";
 
         // =================================================================
-        // AZ UTCALISTÁK ÉS A LOGIKA (PDF alapján)
+        // AZ UTCALISTÁK ÉS A LOGIKA
         // =================================================================
 
         const korzet1Tiszta = [ "Ady Endre utca", "Akácfa utca", "Álmos utca", "Alsónyomás tanya", "Antal utca", "Aradi utca", "Árpád Vezér utca", "Balassi Bálint utca", "Bartók Béla utca", "Béke utca", "Bem Apó utca", "Bercsényi utca", "Busai utca", "Csaba vezér utca", "Csajági utca", "Csátés tanya 2.", "Csintó utca", "Damjanich út", "Dankó Pista utca", "Dobó utca", "Dósa utca", "Esze Tamás utca", "Farkas utca", "Felsőnyomás tanya", "Felvégi utca", "Gábor Áron utca", "Galamb utca", "Gazda-farm 1.", "Gyeplegelő tanya", "Hét-vezért utca", "Hold utca", "Ilona utca", "István Major", "Jásziványi út", "Jászkapitány utca", "Jókai utca", "Kazinczy utca", "Kinizsi utca", "Kisfaludy utca", "Kocsér utca", "Kossuth Lajos út", "Mező utca", "Munkácsy tér", "Munkás utca", "Nap utca", "Nyúl utca", "Orgona utca", "Pélyi út", "Rákóczi utca", "Rapi utca", "Rózsa utca", "Sas utca", "Simon Ignác utca", "Somogyi Béla utca", "Sóti utca", "Szigligeti utca", "Szikszai Gábor utca", "Szögvégi utca", "Szűcs utca", "Tabáni utca", "Temető utca", "Tó utca", "Tompa Mihály utca", "Tóth utca", "Uj utca", "Vágó Pál utca", "Városkert utca", "Vasút utca", "Vasvári utca", "Viola utca", "Winkler István utca", "Zenész utca", "Jászivány - Akácfa utca", "Jászivány - Köves út", "Jászivány - Fő út", "Jászivány - Rózsa utca", "Jászivány - Kossuth utca" ];
@@ -220,22 +257,44 @@
             });
         };
 
-        // Figyeli, hogy kell-e kérni házszámot
         function utcaValtozott() {
             const valasztottTipus = document.getElementById("utcaValaszto").value;
             const hazszamTarolo = document.getElementById("hazszamTarolo");
             const hazszamMezo = document.getElementById("hazszam");
 
             if (valasztottTipus === "okos") {
-                hazszamTarolo.style.display = "block"; // Megmutatja a házszámos dobozt
+                hazszamTarolo.style.display = "block"; 
                 hazszamMezo.value = ""; 
                 hazszamMezo.focus(); 
             } else {
-                hazszamTarolo.style.display = "none"; // Elrejti, ha nem kell
+                hazszamTarolo.style.display = "none";
             }
         }
 
-        // Gomb megnyomása
+        // Nézetváltó funkció (Alap utcaválasztó <---> Külsős választó)
+        function nezetValtas(nezet) {
+            if (nezet === 'kulsos') {
+                document.getElementById('alapNezet').style.display = 'none';
+                document.getElementById('kulsosNezet').style.display = 'block';
+            } else {
+                document.getElementById('kulsosNezet').style.display = 'none';
+                document.getElementById('alapNezet').style.display = 'block';
+                // Nullázzuk az utcaválasztót, ha visszalép
+                document.getElementById("utcaValaszto").value = "";
+                document.getElementById("hazszamTarolo").style.display = "none";
+            }
+        }
+
+        // Külsős betegek közvetlen átirányítása
+        function kulsosIranyitas(orvos) {
+            if (orvos === 1) {
+                window.location.href = orvos1Link;
+            } else if (orvos === 2) {
+                window.location.href = orvos2Link;
+            }
+        }
+
+        // Jászapáti lakosok átirányítása utca és házszám alapján
         function iranyitas() {
             const selectElem = document.getElementById("utcaValaszto");
             const valasztottTipus = selectElem.value;
@@ -252,7 +311,6 @@
             if (valasztottTipus === "1") vegsoKorzet = 1;
             if (valasztottTipus === "2") vegsoKorzet = 2;
             
-            // Ha OKOS utca, lefuttatjuk a matematikát
             if (valasztottTipus === "okos") {
                 if (hazszam === "") {
                     alert("Ehhez az utcához kötelező megadni a házszámot a pontos besoroláshoz! / Please enter your house number!");
@@ -263,7 +321,6 @@
                 vegsoKorzet = megosztottUtcak[utcanev](szam);
             }
 
-            // ÁTIRÁNYÍTÁS A MEGFELELŐ NAPTÁRBA
             if (vegsoKorzet === 1) {
                 window.location.href = orvos1Link;
             } else if (vegsoKorzet === 2) {
